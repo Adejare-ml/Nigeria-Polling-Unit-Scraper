@@ -1,0 +1,134 @@
+# Nigeria Polling Unit Data Extractor & Sorter
+
+This project provides a complete workflow to scrape, clean, and sort polling unit data from the [INEC website (integrity.ng)](https://integrity.ng), and organize the results into structured Excel files grouped by State → LGA → Ward → Polling Unit**.
+
+The tool allows for flexible sorting, sheet-wise separation, and export into Excel, making it useful for data verification, audit, and civic tech applications.
+
+
+
+## 📁 Output Structure
+
+For each state, a single `.xlsx` file is generated with three sheets:
+
+| Sheet Name     | Description |
+|----------------|-------------|
+1| `State_LGA`     | Unique combinations of `State` and `LGA` |
+2| `LGA_Wards`     | Unique combinations of `LGA` and `Ward` |
+3| `LGA_Wards_PUs` | Full dataset with `LGA`, `Ward`, and `Polling Unit` |
+
+
+
+## 🧠 How the Code Works
+
+### 1. **Data Cleaning**
+- Trims all whitespace from `State`, `LGA`, `Ward`, and `Polling Unit`.
+- Drops duplicate entries for accuracy.
+
+### 2. **Sorting & Grouping**
+- Data is grouped **by `State`**.
+- Within each group, data is sorted by:
+  - Sheet 1: `State`, `LGA`
+  - Sheet 2: `LGA`, `Ward`
+  - Sheet 3: `LGA`, `Ward`, `Polling Unit`
+
+### 3. **Excel Export**
+- One `.xlsx` file per state is created using `pandas.ExcelWriter`.
+- Each file includes 3 sheets as described above.
+
+
+
+## ⚠️ Caveats and Issues from INEC Website
+
+### ❗ INEC Labeling Issues (IMPORTANT)
+
+One of the major challenges encountered in this project was the **inconsistent and misleading column labeling** on the INEC website.
+
+Specifically:
+
+| Expected Label | Actual Label on INEC Site |
+|----------------|----------------------------|
+| State          | LGA                        |
+| LGA            | Ward                       |
+| Ward           | Polling Unit               |
+
+This meant that:
+- The field labeled "LGA" on the site **actually refers to the State**.
+- The field labeled "Ward" **refers to the LGA**.
+- The field labeled "Polling Unit" **actually refers to the Ward**.
+
+This misalignment caused a mismatch in data structure. The code has been adjusted to account for this.
+
+> ⚠️ If you're scraping directly from the website, always verify what each column actually represents, not just what it is labeled as.
+  
+
+## 🛠 Dependencies
+
+- `pandas`
+- `openpyxl` (for Excel export)
+- `requests`, `BeautifulSoup`, or `selenium` if scraping live data
+
+
+
+## 📦 File
+
+- `final_work_done_by_jare.ipynb` — Contains the full implementation
+
+
+
+
+
+
+
+
+
+
+
+
+# Key Notes
+
+## 📝 Final Notes on Manual Edits & Observations
+
+After completing the automated scraping and data sorting process, I performed a **final round of manual data cleaning** to make the dataset more relevant and easier to work with.
+
+### 1. Manual Column Removal
+
+Once the scraping process was completed and the data was exported, I removed several columns that were not necessary for the scope of my analysis. These included:
+
+* `PVC Count`
+* `Agent Name`
+* `Agent Contact`
+* And a few other metadata fields that were not directly useful for organizing polling units by geographic hierarchy (State → LGA → Ward → Polling Unit)
+
+This manual cleanup helped focus the final dataset on the actual structural divisions (States, LGAs, Wards, Polling Units) that the project aimed to analyze.
+
+
+# 2. Redundancies & Data Inconsistencies
+
+Despite the success of the scraping and export process, I observed some redundancy and inconsistency* in the dataset that requires attention for future improvement:
+
+State Redundancy: Some rows repeated the state name unnecessarily across different sections.
+LGA Redundancy: LGAs were sometimes duplicated in ways that don’t reflect actual administrative groupings.
+Ward Redundancy: A few Wards appeared multiple times, sometimes due to inconsistent naming, spacing, or labeling from the source.
+
+These issues mostly stem from how the data is structured and labeled on the INEC website, and partially from how the website renders or paginates content.
+
+I resolved most of this through manual checking and editing of the exported Excel files, but I recommend further data normalization and validation if the dataset is to be used for reporting, visualization, or decision-making.
+
+
+
+# 3. Project Summary
+
+Overall, this project represents one of the most meaningful and technically involved tasks I’ve completed in the past week. It involved:
+
+* Web scraping using Python
+* Data cleaning and transformation
+* Hierarchical organization of data
+* Excel file generation
+* Manual validation and final data polishing
+
+I'm grateful for the opportunity to contribute meaningfully during my time here, and I consider this project my **final submission** and a reflection of my learning and progress so far.
+
+Thank you once again for the opportunity and support.
+
+
+
