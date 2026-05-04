@@ -1,134 +1,98 @@
-# Nigeria Polling Unit Data Extractor & Sorter
+Nigeria Polling Unit Data Extractor & Sorter
 
-This project provides a complete workflow to scrape, clean, and sort polling unit data from the [INEC website (integrity.ng)](https://integrity.ng), and organize the results into structured Excel files grouped by State → LGA → Ward → Polling Unit**.
+This project provides an end-to-end workflow for scraping, cleaning, and organizing polling unit data from the INEC website (integrity.ng). The final output is structured Excel files grouped hierarchically by State → LGA → Ward → Polling Unit.
 
-The tool allows for flexible sorting, sheet-wise separation, and export into Excel, making it useful for data verification, audit, and civic tech applications.
+The tool supports data cleaning, normalization, and export into well-structured Excel sheets, making it useful for data verification, auditing, and civic tech analysis.
 
+📁 Output Structure
 
+For each state, a single Excel file (.xlsx) is generated containing three sheets:
 
-## 📁 Output Structure
+Sheet Name	Description
+State_LGA	Unique combinations of State and LGA
+LGA_Wards	Unique combinations of LGA and Ward
+LGA_Wards_PUs	Full dataset including LGA, Ward, and Polling Unit
+🧠 How the Pipeline Works
+1. Data Cleaning
+Removes leading and trailing whitespace from all key fields:
+State
+LGA
+Ward
+Polling Unit
+Drops duplicate records to ensure data consistency
+2. Sorting & Grouping
+Data is grouped by State
+Within each state, data is organized as follows:
+Sheet 1: State → LGA
+Sheet 2: LGA → Ward
+Sheet 3: LGA → Ward → Polling Unit
 
-For each state, a single `.xlsx` file is generated with three sheets:
+This ensures a clean hierarchical structure for analysis.
 
-| Sheet Name     | Description |
-|----------------|-------------|
-1| `State_LGA`     | Unique combinations of `State` and `LGA` |
-2| `LGA_Wards`     | Unique combinations of `LGA` and `Ward` |
-3| `LGA_Wards_PUs` | Full dataset with `LGA`, `Ward`, and `Polling Unit` |
+3. Excel Export
+One Excel file is generated per state using pandas.ExcelWriter
+Each file contains the three structured sheets listed above
+⚠️ Important Notes on INEC Data Structure
+❗ Column Mislabeling on INEC Website
 
+A major issue discovered during scraping is inconsistent labeling on the INEC platform.
 
+The actual data mapping is as follows:
 
-## 🧠 How the Code Works
+Website Label	Actual Meaning
+LGA	State
+Ward	LGA
+Polling Unit	Ward
 
-### 1. **Data Cleaning**
-- Trims all whitespace from `State`, `LGA`, `Ward`, and `Polling Unit`.
-- Drops duplicate entries for accuracy.
+This mismatch required adjustments in the data processing logic.
 
-### 2. **Sorting & Grouping**
-- Data is grouped **by `State`**.
-- Within each group, data is sorted by:
-  - Sheet 1: `State`, `LGA`
-  - Sheet 2: `LGA`, `Ward`
-  - Sheet 3: `LGA`, `Ward`, `Polling Unit`
+Always validate what each field represents based on content, not label names alone.
 
-### 3. **Excel Export**
-- One `.xlsx` file per state is created using `pandas.ExcelWriter`.
-- Each file includes 3 sheets as described above.
+🛠 Dependencies
+pandas
+openpyxl (Excel export)
+requests, BeautifulSoup, or selenium (for scraping, depending on implementation)
+📦 Main File
+final_work_done_by_jare.ipynb
+Contains the full pipeline: scraping, cleaning, sorting, and export
+🧹 Manual Data Cleaning Notes
 
+After automated processing, additional manual cleaning was performed to refine the dataset.
 
+Removed Columns
 
-## ⚠️ Caveats and Issues from INEC Website
+The following fields were excluded as they were not relevant to the core geographic structure:
 
-### ❗ INEC Labeling Issues (IMPORTANT)
+PVC Count
+Agent Name
+Agent Contact
+Other non-essential metadata fields
 
-One of the major challenges encountered in this project was the **inconsistent and misleading column labeling** on the INEC website.
+This helped focus the dataset strictly on electoral geography.
 
-Specifically:
+⚠️ Data Issues Observed
 
-| Expected Label | Actual Label on INEC Site |
-|----------------|----------------------------|
-| State          | LGA                        |
-| LGA            | Ward                       |
-| Ward           | Polling Unit               |
+Some inconsistencies were found in the raw dataset:
 
-This meant that:
-- The field labeled "LGA" on the site **actually refers to the State**.
-- The field labeled "Ward" **refers to the LGA**.
-- The field labeled "Polling Unit" **actually refers to the Ward**.
+1. Redundancy Issues
+Duplicate State entries across multiple rows
+Repeated LGAs not aligned with clean administrative grouping
+Wards appearing multiple times due to inconsistent formatting
+2. Source-Level Inconsistencies
 
-This misalignment caused a mismatch in data structure. The code has been adjusted to account for this.
+These issues mainly originate from:
 
-> ⚠️ If you're scraping directly from the website, always verify what each column actually represents, not just what it is labeled as.
-  
+INEC website structure
+Inconsistent naming conventions
+Pagination and rendering behavior
+🧾 Final Summary
 
-## 🛠 Dependencies
+This project combines:
 
-- `pandas`
-- `openpyxl` (for Excel export)
-- `requests`, `BeautifulSoup`, or `selenium` if scraping live data
+Web scraping in Python
+Data cleaning and normalization
+Hierarchical data structuring
+Excel report generation
+Manual validation and refinement
 
-
-
-## 📦 File
-
-- `final_work_done_by_jare.ipynb` — Contains the full implementation
-
-
-
-
-
-
-
-
-
-
-
-
-# Key Notes
-
-## 📝 Final Notes on Manual Edits & Observations
-
-After completing the automated scraping and data sorting process, I performed a **final round of manual data cleaning** to make the dataset more relevant and easier to work with.
-
-### 1. Manual Column Removal
-
-Once the scraping process was completed and the data was exported, I removed several columns that were not necessary for the scope of my analysis. These included:
-
-* `PVC Count`
-* `Agent Name`
-* `Agent Contact`
-* And a few other metadata fields that were not directly useful for organizing polling units by geographic hierarchy (State → LGA → Ward → Polling Unit)
-
-This manual cleanup helped focus the final dataset on the actual structural divisions (States, LGAs, Wards, Polling Units) that the project aimed to analyze.
-
-
-# 2. Redundancies & Data Inconsistencies
-
-Despite the success of the scraping and export process, I observed some redundancy and inconsistency* in the dataset that requires attention for future improvement:
-
-State Redundancy: Some rows repeated the state name unnecessarily across different sections.
-LGA Redundancy: LGAs were sometimes duplicated in ways that don’t reflect actual administrative groupings.
-Ward Redundancy: A few Wards appeared multiple times, sometimes due to inconsistent naming, spacing, or labeling from the source.
-
-These issues mostly stem from how the data is structured and labeled on the INEC website, and partially from how the website renders or paginates content.
-
-I resolved most of this through manual checking and editing of the exported Excel files, but I recommend further data normalization and validation if the dataset is to be used for reporting, visualization, or decision-making.
-
-
-
-# 3. Project Summary
-
-Overall, this project represents one of the most meaningful and technically involved tasks I’ve completed in the past week. It involved:
-
-* Web scraping using Python
-* Data cleaning and transformation
-* Hierarchical organization of data
-* Excel file generation
-* Manual validation and final data polishing
-
-I'm grateful for the opportunity to contribute meaningfully during my time here, and I consider this project my **final submission** and a reflection of my learning and progress so far.
-
-Thank you once again for the opportunity and support.
-
-
-
+Overall, it represents a complete data pipeline from raw extraction to structured output suitable for analysis and reporting.
