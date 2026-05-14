@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Nigeria Electoral Data Pipeline
 
 A professional data engineering pipeline designed to extract, clean, and structure polling unit data from the INEC-integrated integrity.ng platform.
@@ -67,3 +68,4 @@ Each state generates a dedicated `.xlsx` report with the following structure:
 - **State_LGA**: Unique State and LGA pairings.
 - **LGA_Wards**: Administrative breakdown of Wards per LGA.
 - **LGA_Wards_PUs**: The most granular level, mapping every Polling Unit to its respective Ward and LGA.
+=======
