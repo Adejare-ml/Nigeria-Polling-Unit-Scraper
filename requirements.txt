@@ -1,0 +1,7 @@
+# Dependencies for Nigeria Electoral Data Pipeline
+pandas
+selenium
+webdriver-manager
+openpyxl
+beautifulsoup4
+requests
