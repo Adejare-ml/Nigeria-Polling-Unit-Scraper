@@ -1,69 +1,75 @@
-# Nigeria Electoral Data Pipeline
+# 🇳🇬 Nigeria Polling Unit Data Pipeline
+**High-Scale Electoral Data Extraction and Hierarchical Structuring Engine**
 
-A professional data engineering pipeline designed to extract, clean, and structure polling unit data from the INEC-integrated integrity.ng platform.
+[![Python](https://img.shields.io/badge/Language-Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Pandas](https://img.shields.io/badge/Data-Pandas-150458?style=flat-square&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Selenium](https://img.shields.io/badge/Automation-Selenium-43A047?style=flat-square&logo=selenium&logoColor=white)](https://www.selenium.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-## 🚀 Project Overview
+## 🔬 Executive Summary
+This project implements a robust data engineering pipeline designed to scrape, normalize, and structure electoral administrative hierarchies from the `integrity.ng` platform. The system automates the extraction of the complex State $\rightarrow$ LGA $\rightarrow$ Ward $\rightarrow$ Polling Unit (PU) chain, transforming unstructured HTML data into high-fidelity, analysis-ready datasets for civic auditing and electoral transparency.
 
-This project automates the extraction of electoral administrative hierarchies (State $\rightarrow$ LGA $\rightarrow$ Ward $\rightarrow$ Polling Unit) from web sources. It transforms unstructured HTML table data into a clean, analysis-ready format, providing both comprehensive CSV datasets and state-specific Excel reports for auditing and civic tech applications.
+### 🏗️ Engineering Challenges Solved
+- **Semantic Normalization:** The source data contained systemic labeling errors (e.g., 'LGA' columns containing 'State' names). I implemented a semantic mapping layer in `src/config.py` to programmatically correct these anomalies during extraction.
+- **Dynamic State-Space Navigation:** Engineered a recursive Selenium-based scraper that manages dynamic pagination and state-specific filtering across all 37 administrative regions of Nigeria.
+- **Relational Data Decomposition:** Developed a processing engine that converts flat scraped lists into a structured relational hierarchy, exported as multi-sheet Excel workbooks for professional auditing.
 
-### Key Technical Challenges Solved:
-- **Data Normalization:** Implemented a mapping layer to correct systemic mislabeling in the source website's columns (where 'LGA' often represented 'State', etc.).
-- **Pagination Handling:** Engineered a robust Selenium-based scraper that handles dynamic pagination and state-based filtering across 37 administrative regions.
-- **Hierarchical Structuring:** Developed a processing engine that decomposes flat data into a multi-level relational structure exported to multi-sheet Excel workbooks.
+---
 
-## 🛠 Tech Stack
-
-- **Language:** Python 3.x
-- **Libraries:** 
-  - `Selenium` & `Webdriver-Manager` (Web Automation)
-  - `Pandas` (Data Manipulation & Cleaning)
-  - `OpenPyXL` (Excel Engine)
-  - `Logging` (System Monitoring)
-
-## 📁 Project Structure
+## 📂 Repository Architecture
+The project follows a modular data-pipeline pattern to separate extraction logic from data transformation.
 
 ```text
 ├── data/
-│   ├── raw/            # Original scraped snapshots
-│   └── processed/     # Cleaned CSVs and State-level Excel reports
-├── src/
-│   ├── config.py       # Constants, URLS, and Column Mappings
-│   ├── scraper.py      # Selenium-based extraction logic
-│   └── processor.py    # Data cleaning and Excel generation
-├── notebooks/          # Exploratory data analysis and prototype runs
-└── README.md           # Project documentation
+│   └── raw/               # Immutable raw snapshots of scraped data
+├── src/                   # Core Engineering Logic
+│   ├── config.py          # Semantic mappings, URL constants, and selectors
+│   ├── scraper.py         # Selenium-driven extraction engine
+│   ├── processor.py       # Data cleaning and hierarchical Excel generation
+│   └── utils.py           # Shared helper functions for data validation
+├── experiments/           # Research and Prototyping
+│   ├── pagination_test.ipynb       # Page-load and timeout optimization
+│   ├── extraction_prototype.ipynb  # Initial selector validation
+│   └── prompt_engineering_demo.ipynb # LLM-based data cleaning experiments
+└── README.md              # Technical Documentation
 ```
 
-## 🚦 Getting Started
+---
 
-### Prerequisites
-- Chrome Browser installed.
-- Python 3.8+
+## 🚀 Integration Guide
 
-### Installation
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   pip install pandas selenium webdriver-manager openpyxl
-   ```
+### 1. Environment Initialization
+```bash
+git clone https://github.com/Adejare-ml/Nigeria-Polling-Unit-Scraper.git
+cd Nigeria-Polling-Unit-Scraper
+pip install -r requirements.txt
+```
 
-### Execution
-To run the full pipeline:
+### 2. Pipeline Execution
+The pipeline is designed for programmatic execution. Use the following entry point to run the full extraction and processing suite:
+
 ```python
 from src.scraper import run_full_extraction
 from src.processor import DataProcessor
 
-# 1. Extract
+# Stage 1: Extract raw hierarchies
 wards, pus = run_full_extraction()
 
-# 2. Process & Export
+# Stage 2: Process and Generate State-level Audit Reports
 processor = DataProcessor()
 df_all = processor.process_to_csv(wards, pus)
 processor.generate_state_reports(df_all)
 ```
 
-## 📊 Output Format
-Each state generates a dedicated `.xlsx` report with the following structure:
-- **State_LGA**: Unique State and LGA pairings.
-- **LGA_Wards**: Administrative breakdown of Wards per LGA.
-- **LGA_Wards_PUs**: The most granular level, mapping every Polling Unit to its respective Ward and LGA.
+---
+
+## 🛠 Engineering Stack
+| Component | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Automation** | Selenium / Webdriver-Manager | Dynamic web interaction and pagination |
+| **ETL** | Pandas | Data cleaning, deduplication, and normalization |
+| **Storage** | OpenPyXL / CSV | Structured data export for civic auditing |
+| **Observability** | Python Logging | System monitoring and error tracking |
+
+---
+**Maintainer:** [Adelugba Adejare](https://github.com/Adejare-ml)
