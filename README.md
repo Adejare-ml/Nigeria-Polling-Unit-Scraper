@@ -61,6 +61,16 @@ df_all = processor.process_to_csv(wards, pus)
 processor.generate_state_reports(df_all)
 ```
 
+### 3. Offline Test Suite
+The repository includes tests for configuration, data processing, and HTML parsing without calling the live `integrity.ng` site.
+
+```bash
+pip install -r requirements.txt pytest
+python -m pytest
+```
+
+The GitHub Actions workflow in `.github/workflows/ci.yml` runs these tests on pushes and pull requests to `main`.
+
 ---
 
 ## 🛠 Engineering Stack

@@ -52,6 +52,8 @@ class DataProcessor:
 
 def clean_data(df):
     """Standard cleaning: whitespace removal and duplicate dropping."""
-    df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+    text_columns = df.select_dtypes(include=["object", "string"]).columns
+    for column in text_columns:
+        df[column] = df[column].map(lambda value: value.strip() if isinstance(value, str) else value)
     df = df.drop_duplicates()
     return df
